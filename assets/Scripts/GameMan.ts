@@ -24,6 +24,9 @@ export default class GameMan extends cc.Component {
     @property(cc.Prefab)
     private EatPrefab : cc.Prefab = null;
 
+    @property({type:cc.AudioClip})
+    bgm: cc.AudioClip = null;
+
     private anim = null;
     private animState = null;
     private got_coin = false;
@@ -37,6 +40,7 @@ export default class GameMan extends cc.Component {
     }
 
     start () {
+        //cc.audioEngine.playMusic(this.bgm, true);
         this.anim.play('ques');
     }
 

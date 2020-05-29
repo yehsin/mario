@@ -7,7 +7,7 @@
 // Learn life-cycle callbacks:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
-
+//import GameMgr from "./gameplay";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
@@ -21,6 +21,12 @@ export default class player extends cc.Component {
 
     @property(cc.Node)
     maincamera: cc.Node = null;
+
+    @property({type:cc.AudioClip})
+    jumpSound: cc.AudioClip = null;
+
+    @property({type:cc.AudioClip})
+    dieSound: cc.AudioClip = null;
 
     private playerSpeed: number = 0;
     private anim = null;
@@ -130,11 +136,17 @@ export default class player extends cc.Component {
     }
 
     private jump(){
+        cc.audioEngine.playEffect(this.jumpSound,false);
         this.onGround = false;
         this.getComponent(cc.RigidBody).linearVelocity=cc.v2(0,1300);
         if(this.issmall)this.small_jump();
         else if(this.isbig) this.big_jump();
         
+    }
+
+    private reborn(rebornPos: cc.Vec2){
+        this.node.position = rebornPos;
+        this.getComponent(cc.RigidBody).linearVelocity = cc.v2();
     }
 
     private playerMovement(dt){
