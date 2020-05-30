@@ -8,6 +8,8 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
+import gameplay from "./gameplay";
+
 const {ccclass, property} = cc._decorator;
 
 @ccclass
@@ -15,6 +17,7 @@ export default class coin extends cc.Component {
 
     @property(cc.Label)
     label: cc.Label = null;
+
 
     @property
     text: string = 'hello';
@@ -26,7 +29,7 @@ export default class coin extends cc.Component {
     // onLoad () {}
 
     public init(block: cc.Node){
-        this.getComponent(cc.Animation).play('coin'));
+        this.getComponent(cc.Animation).play('coin');
         
         this.anim(block);
         this.parent_y = block.position.y;
@@ -41,7 +44,7 @@ export default class coin extends cc.Component {
         });
         
         this.node.runAction(cc.speed(cc.sequence(jump,down,finish),2));
-
+        //this.Gameplay.getComponent(gameplay).getcoin(1);
     }
 
     private anim(block:cc.Node){

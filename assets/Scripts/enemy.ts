@@ -10,6 +10,8 @@
 
 import player from "./player";
 import player_Lv2 from "./player_Lv2";
+import gameplay from './gameplay';
+//import gameplay from "./gameplay";
 
 const {ccclass, property} = cc._decorator;
 
@@ -18,6 +20,15 @@ export default class Enemy extends cc.Component {
 
     @property(cc.Label)
     label: cc.Label = null;
+
+    @property(gameplay)
+    Gameplay: gameplay = null;
+
+    @property(player)
+    Player: player = null;
+
+    @property(player_Lv2)
+    player2: player_Lv2 = null;
 
     @property
     text: string = 'hello';
@@ -138,15 +149,18 @@ export default class Enemy extends cc.Component {
             cc.log(this.node.name,other.node.name,this.node.getComponent(cc.RigidBody).linearVelocity);
             if(other.node.name == 'player'){
                 
-                if(other.node.y > this.node.y && this.animState == this.anim.play('turtle_move').name){
+                if(contact.getWorldManifold().normal.y>0 && this.animState == this.anim.play('turtle_move').name){
                     cc.log('dead');
                     this.anim.play('turtle_dead');
                     this.animState = this.anim.play('turtle_dead').name;
                     this.node.getComponent(cc.RigidBody).linearVelocity = cc.v2(0,0);
+                    this.Gameplay.getComponent(gameplay).updateScore(50);
                 }
                 else if(other.node.y < this.node.y && this.animState == this.anim.play('turtle_move').name){
-                    other.node.getComponent(player).hurt();
-                    other.node.getComponent(player_Lv2).hurt();
+                    if(this.Player.getComponent(player) != null)other.node.getComponent(player).hurt();
+                    else {
+                        this.player2.getComponent(player_Lv2).hurt();
+                    }
                 }
                 else if(this.animState == this.anim.play('turtle_dead').name){
                     if(this.node.x > other.node.x){ //playery is left
@@ -162,9 +176,11 @@ export default class Enemy extends cc.Component {
                     this.anim.play('turtle_slide');
                     this.animState = this.anim.play('turtle_slide').name;
                 }
-                else if(this.animState == this.anim.play('turtle_slide').name && this.node.y > other.node.y){
-                    other.node.getComponent(player).hurt();
-                    other.node.getComponent(player_Lv2).hurt();
+                else if(this.animState == this.anim.play('turtle_slide').name && this.node.y >= other.node.y){
+                    if(this.Player.getComponent(player) != null)other.node.getComponent(player).hurt();
+                    else {
+                        this.player2.getComponent(player_Lv2).hurt();
+                    }
                 }
                 else if(this.animState == this.anim.play('turtle_slide').name && this.node.y < other.node.y){
                     //cc.log('t->d');
@@ -196,6 +212,7 @@ export default class Enemy extends cc.Component {
             cc.log(this.node.name,other.node.name);
             if(other.node.name == 'player'){
                 if(contact.getWorldManifold().normal.y >0){
+                    this.Gameplay.getComponent(gameplay).updateScore(50);
                     this.anim.play('mushroom_dead');
                     this.animState =  this.anim.play('mushroom_dead').name;
                     this.scheduleOnce(()=>{this.node.destroy()},1);

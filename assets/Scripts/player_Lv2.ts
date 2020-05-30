@@ -178,7 +178,7 @@ export default class player_Lv2 extends cc.Component {
         this.node.position = rebornPos;
         this.getComponent(cc.RigidBody).linearVelocity = cc.v2();
     }
-    private hurt(){
+    hurt(){
         if(this.issmall)this.isDead = true;
         else if(this.isbig){
             this.issmall = true;
@@ -241,7 +241,7 @@ export default class player_Lv2 extends cc.Component {
 
     update (dt) {
 
-        cc.log(this.enter_tube);
+        //cc.log(this.enter_tube);
         if(!this.iswater)cc.director.getPhysicsManager().gravity = cc.v2 (0,-200);
         this.playerMovement(dt);
         this.maincamera.x = this.node.x;
@@ -286,7 +286,7 @@ export default class player_Lv2 extends cc.Component {
 
     onBeginContact(contact,self,other){
         cc.log(other.node.name);
-        if(other.node.name == 'floor' || other.node.name == 'Mid_floor' || other.node.name == 'button_gray' ||  other.node.name == 'question_block' || other.node.name == 'tree'){
+        if(other.node.name == 'floor' || other.node.name == 'Mid_floor' || other.node.name == 'button_gray' ||  other.node.name == 'ques_block' || other.node.name == 'tree'){
             this.onGround = true;
             this.iswater = false;
         }
@@ -321,6 +321,7 @@ export default class player_Lv2 extends cc.Component {
             },0,1,0);
             this.issmall = false;
             this.isbig = true;
+            this.Gameplay.getComponent(gameplay).updateScore(100);
             //this.anim.play('small2Big');
         }
 
@@ -328,8 +329,9 @@ export default class player_Lv2 extends cc.Component {
             this.isDead = true;
             this.Gameplay.getComponent(gameplay).countLife(-1);
         }
-        else if(other.node.name == 'Coin'){
+        else if(other.node.name == 'Coins'){
             other.node.destroy();
+            this.Gameplay.getComponent(gameplay).getcoin(1);
         }
 
         else if (other.node.name == 'tube'){
@@ -340,9 +342,26 @@ export default class player_Lv2 extends cc.Component {
                 this.enter = true; 
             }
             if(other.node.getComponent(cc.PhysicsBoxCollider).tag == 11){
-                cc.director.loadScene("Lv1");
+                cc.director.loadScene("dead_menu");
             }
         }
+
+        else if(other.node.name == 'mushroom'){
+            if(this.node.y < other.node.y){
+                if(this.issmall){
+                    this.isDead = true;
+                    this.Gameplay.getComponent(gameplay).countLife(-1);
+                }
+                else if(this.isbig){
+                    this.anim.play('Big2small');
+                    this.animState = this.anim.play('Big2small');
+                    this.issmall = true;
+                    this.isbig = false;
+                }
+            }
+        }
+
+        
     }
 
     onPreSolve(contact, self, other){

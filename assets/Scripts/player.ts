@@ -115,7 +115,10 @@ export default class player extends cc.Component {
         
     }
     private hurt(){
-        if(this.issmall)this.isDead = true;
+        if(this.issmall){
+            this.isDead = true;
+            this.Gameplay.getComponent(gameplay).countLife(-1);
+        }
         else if(this.isbig){
             this.issmall = true;
             this.isbig = false;
@@ -248,6 +251,7 @@ export default class player extends cc.Component {
             this.issmall = false;
             this.isbig = true;
             //this.anim.play('small2Big');
+            this.Gameplay.getComponent(gameplay).updateScore(100);
         }
 
         else if(other.node.name == 'bound'){
@@ -260,7 +264,10 @@ export default class player extends cc.Component {
 
         else if(other.node.name == 'mushroom'){
             if(this.node.y < other.node.y){
-                if(this.issmall) this.isDead = true;
+                if(this.issmall){
+                    this.isDead = true;
+                    this.Gameplay.getComponent(gameplay).countLife(-1);
+                }
                 else if(this.isbig){
                     this.anim.play('Big2small');
                     this.animState = this.anim.play('Big2small');

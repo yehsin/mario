@@ -7,6 +7,8 @@
 // Learn life-cycle callbacks:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
+
+import gameplay from './gameplay'
 const {ccclass, property} = cc._decorator;
 
 @ccclass
@@ -23,6 +25,9 @@ export default class GameMan extends cc.Component {
 
     @property(cc.Prefab)
     private EatPrefab : cc.Prefab = null;
+
+    @property(cc.Node)
+    Gameplay: gameplay= null;
 
     @property({type:cc.AudioClip})
     bgm: cc.AudioClip = null;
@@ -48,23 +53,29 @@ export default class GameMan extends cc.Component {
 
     onBeginContact(contact,self,other){
         if(self.node.name == "ques_block" && other.node.name == 'player' ){
-            if(!this.got_coin){
+            if(!this.got_coin && contact.getWorldManifold().normal.y <0){
+                this.got_coin = true;
                 this.anim.play('trigger',1)
                 let coin = cc.instantiate(this.CoinPrefab);
                 coin.getComponent('coin_ans').init(this.node);
-                this.got_coin = true;
+                this.Gameplay.getComponent(gameplay).getcoin(1);
+                //cc.game.pause();
+                
             }
+            
             
            
             //cc.log('conflict');
         }
-        else if(self.node.name == 'eat_trigger' && other.node.name == 'player' && other.node.y <= this.node.y){
+        else if(self.node.name == 'eat_trigger' && other.node.name == 'player' /*&& other.node.y <= this.node.y*/){
             //cc.log('trigger');
-            if(!this.got_eat){
+            if(!this.got_eat && contact.getWorldManifold().normal.y <0){
                 this.anim.play('trigger',1);
                 let eat = cc.instantiate(this.EatPrefab);
                 eat.getComponent('eat_ans').init(this.node);
                 this.got_eat = true;
+                //cc.game.pause();
+                
             }
             
 
