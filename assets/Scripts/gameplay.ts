@@ -58,5 +58,18 @@ export default class gameplay extends cc.Component {
         this.gamestart();
     }
 
+    countLife(number){
+        this.playerLife += number;
+    }
+
+    update(dt){
+        if(this.playerLife == 0){
+            //this.gameover();
+            this.gameEnd();
+        }
+    }
+
+
+
     // update (dt) {}
 }

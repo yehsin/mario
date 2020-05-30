@@ -7,13 +7,13 @@
 // Learn life-cycle callbacks:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
-//import GameMgr from "./gameplay";
+
 import gameplay from './gameplay'
 
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class player extends cc.Component {
+export default class player_Lv2 extends cc.Component {
 
     @property(cc.Label)
     label: cc.Label = null;
@@ -39,12 +39,14 @@ export default class player extends cc.Component {
     private aDown:boolean = false;
     private dDown:boolean = false;
     private SpaceDown:boolean = false;
+    private issmall = true;
+    private isbig = false;
+    private iswater:boolean = false;
     private enter_tube = false;
-    public issmall = true;
-    public isbig = false;
+    private enter = false;
     //private idgameover = false;
     
-    public isDead:boolean = false;
+    private isDead:boolean = false;
     private onGround: boolean = true;
 
     // LIFE-CYCLE CALLBACKS:
@@ -62,6 +64,7 @@ export default class player extends cc.Component {
         if(event.keyCode == cc.macro.KEY.a){
             this.anim.stop();
             this.aDown = false;
+            
             if(this.issmall){
                 this.small_stand();
                 this.smallwalk_ani();
@@ -91,39 +94,36 @@ export default class player extends cc.Component {
             this.SpaceDown = false;
             
         }
-        
+        if(event.keyCode == cc.macro.KEY.s){
+            this.enter_tube = false;
+        }
     }
     onKeyDown(event){
         
         if(event.keyCode == cc.macro.KEY.a){
-            cc.log("touch");
+            //cc.log("touch");
             this.aDown = true;
             this.dDown = false;
         }
         if(event.keyCode == cc.macro.KEY.d){
-            cc.log("touch");
+            //cc.log("touch");
             this.dDown = true;
             this.aDown = false;
         }
         if(event.keyCode == cc.macro.KEY.space){
-            cc.log(event.keyCode);
-            cc.log("Key Down: " + cc.macro.KEY.space);
+            //cc.log(event.keyCode);
+            //cc.log("Key Down: " + cc.macro.KEY.space);
             this.SpaceDown = true;
             
         }
-        
-        
-    }
-    private hurt(){
-        if(this.issmall)this.isDead = true;
-        else if(this.isbig){
-            this.issmall = true;
-            this.isbig = false;
-            this.anim.play('Big2small');
-            this.animState = this.anim.play('Big2small');
+
+        if(event.keyCode == cc.macro.KEY.s){
+            cc.log('s');
+            this.enter_tube = true;
         }
         
     }
+
     private smallwalk_ani(){
         this.anim.play('right_walk');
         this.animState = this.anim.play('right_walk');
@@ -152,13 +152,25 @@ export default class player extends cc.Component {
         this.anim.play('Big_stand');
         this.animState = this.anim.play('Big_stand');
     }
+    private small_sim(){
+        this.anim.play('swim');
+        this.animState = this.anim.play('swim');
+    }
+
+    private big_swim(){
+        this.anim.play('Big_swim');
+        this.animState = this.anim.play('Big_swim');
+    }
 
     private jump(){
         cc.audioEngine.playEffect(this.jumpSound,false);
         this.onGround = false;
-        this.getComponent(cc.RigidBody).linearVelocity=cc.v2(0,1300);
+        this.getComponent(cc.RigidBody).linearVelocity=cc.v2(0,800);
         if(this.issmall)this.small_jump();
         else if(this.isbig) this.big_jump();
+        
+        
+        
         
     }
 
@@ -166,16 +178,35 @@ export default class player extends cc.Component {
         this.node.position = rebornPos;
         this.getComponent(cc.RigidBody).linearVelocity = cc.v2();
     }
+    private hurt(){
+        if(this.issmall)this.isDead = true;
+        else if(this.isbig){
+            this.issmall = true;
+            this.isbig = false;
+            this.anim.play('Big2small');
+            this.animState = this.anim.play('Big2small');
+        }
+        
+    }
 
     private playerMovement(dt){
         this.playerSpeed = 0;
         
         if(this.aDown){
-            cc.log(this.animState.isPlaying);
+            //cc.log(this.animState.isPlaying);
             if(this.animState.isPlaying){}
             else{
-                if(this.issmall) this.smallwalk_ani();
-                else if(this.isbig) this.bidwalk_ani();
+                if(!this.iswater){
+                    if(this.issmall) this.smallwalk_ani();
+                    else if(this.isbig) this.bidwalk_ani();
+                }
+                else {
+                    if(this.issmall) this.small_sim();
+                    else if(this.isbig) this.big_swim();
+                    this.getComponent(cc.RigidBody).applyForceToCenter(new cc.Vec2(0, 1500),true);
+
+                }
+                
             }
             this.playerSpeed = -300;
             this.node.scaleX = -1;
@@ -184,9 +215,17 @@ export default class player extends cc.Component {
             
             if(this.animState.isPlaying){}
             else{
-                if(this.issmall) this.smallwalk_ani();
-                else if(this.isbig) this.bidwalk_ani();
+                if(!this.iswater){
+                    if(this.issmall) this.smallwalk_ani();
+                    else if(this.isbig) this.bidwalk_ani();
+                }
+                else {
+                    if(this.issmall) this.small_sim();
+                    else if(this.isbig) this.big_swim();
+                    this.getComponent(cc.RigidBody).applyForceToCenter(new cc.Vec2(0, 1500),true);
+                }
             }
+            
             this.playerSpeed = 300;
             this.node.scaleX = 1;
             //this.animState.repeatCount = Infinity;
@@ -195,12 +234,15 @@ export default class player extends cc.Component {
         if(this.SpaceDown && this.onGround){
             this.jump();
         }
-
+        
         this.node.x += this.playerSpeed * dt;
-        cc.log(this.playerSpeed);
-
+        //cc.log(this.playerSpeed);
     }
+
     update (dt) {
+
+        cc.log(this.enter_tube);
+        if(!this.iswater)cc.director.getPhysicsManager().gravity = cc.v2 (0,-200);
         this.playerMovement(dt);
         this.maincamera.x = this.node.x;
         if(this.onGround == false){
@@ -213,27 +255,59 @@ export default class player extends cc.Component {
             
         }
         else if(this.onGround == true && this.aDown == false && this.dDown == false){
+            if(!this.iswater){
+                if(this.issmall) this.small_stand();
+                else if(this.isbig) this.big_stand();
+            }
+            
+        }
+        else if(this.iswater && this.aDown == false && this.dDown == false){
+            
             if(this.issmall) this.small_stand();
             else if(this.isbig) this.big_stand();
+            
+            
         }
         if(this.isDead){
+            cc.log('dead');
             this.node.getComponent(cc.RigidBody).linearVelocity = cc.v2(0,0);
             this.node.position = cc.v2(-195,22);
             this.isDead = false;
         }
+
+        if(this.enter_tube && this.enter){
+            cc.log(this.enter);
+            cc.log('enter');
+            this.node.position = cc.v2(-450,250);
+            this.enter = false;
+            this.enter_tube = false;
+        }
     }
 
     onBeginContact(contact,self,other){
-        if(other.node.name == 'floor' || other.node.name == 'Mid_floor' || other.node.name == 'button_gray' ||  other.node.name == 'ques_block'  || other.node.name == 'tree' || other.node.name == 'tube'){
+        cc.log(other.node.name);
+        if(other.node.name == 'floor' || other.node.name == 'Mid_floor' || other.node.name == 'button_gray' ||  other.node.name == 'question_block' || other.node.name == 'tree'){
             this.onGround = true;
+            this.iswater = false;
         }
-        else if(other.node.name == 'block'){
-            cc.log(contact.getWorldManifold.points);
-            if(self.node.y < other.node.y + other.node.height/2){
-                contact.disabled = true;
+        if(other.node.name == 'water'){
+            this.iswater = true;
+            //this.getComponent(cc.RigidBody).linearVelocity = cc.v2(0,0);
+            cc.director.getPhysicsManager().gravity = cc.v2 (0,0);
+            this.getComponent(cc.RigidBody).linearVelocity = cc.v2(0,-30);
+            //this.onGround = false;
+        }
+
+        if(other.node.name == 'damage'){
+            if(this.issmall){
+                this.isDead = true;
+                this.Gameplay.getComponent(gameplay).countLife(-1);
             }
-            else {
-                this.onGround = true;
+            else if(this.isbig){
+                this.issmall = true;
+                this.isbig = false;
+                this.anim.play('Big2small');
+                this.animState = this.anim.play('Big2small');
             }
         }
 
@@ -254,21 +328,48 @@ export default class player extends cc.Component {
             this.isDead = true;
             this.Gameplay.getComponent(gameplay).countLife(-1);
         }
-        else if(other.node.name == 'flag'){
-            cc.director.loadScene('Lv2');
+        else if(other.node.name == 'Coin'){
+            other.node.destroy();
         }
 
-        else if(other.node.name == 'mushroom'){
-            if(this.node.y < other.node.y){
-                if(this.issmall) this.isDead = true;
-                else if(this.isbig){
-                    this.anim.play('Big2small');
-                    this.animState = this.anim.play('Big2small');
-                    this.issmall = true;
-                    this.isbig = false;
-                }
+        else if (other.node.name == 'tube'){
+            cc.log('tube');
+            this.onGround = true;
+            if(other.node.getComponent(cc.PhysicsBoxCollider).tag == 10){
+                
+                this.enter = true; 
+            }
+            if(other.node.getComponent(cc.PhysicsBoxCollider).tag == 11){
+                cc.director.loadScene("Lv1");
             }
         }
-        
     }
+
+    onPreSolve(contact, self, other){
+        if(other.node.name == 'water'){
+            //cc.director.getPhysicsManager().gravity = cc.v2 (0,0);
+            this.getComponent(cc.RigidBody).linearVelocity = cc.v2(0,-30);
+        }
+    }
+
+    onPostSolve(contact, self, other){
+        if(other.node.name == 'water'){
+            //cc.director.getPhysicsManager().gravity = cc.v2 (0,0);
+            //this.getComponent(cc.RigidBody).linearVelocity = cc.v2(this.getComponent(cc.RigidBody).linearVelocity.x,-1);
+            this.getComponent(cc.RigidBody).linearVelocity = cc.v2(0,-30);
+        }
+    }
+
+    onEndContact(contact, self, other){
+        if(other.node.name == 'water'){
+            this.iswater = false;
+            cc.log('leave');
+        }
+    }
+
+    
+
+
+
+    // update (dt) {}
 }

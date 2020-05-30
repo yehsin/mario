@@ -9,6 +9,7 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import player from "./player";
+import player_Lv2 from "./player_Lv2";
 
 const {ccclass, property} = cc._decorator;
 
@@ -136,13 +137,16 @@ export default class Enemy extends cc.Component {
         else if(self.node.name == 'turtle'){
             cc.log(this.node.name,other.node.name,this.node.getComponent(cc.RigidBody).linearVelocity);
             if(other.node.name == 'player'){
-                //cc.log('player & turtle');
-                //cc.log(this.node.y,other.node.y,this.animState);
+                
                 if(other.node.y > this.node.y && this.animState == this.anim.play('turtle_move').name){
                     cc.log('dead');
                     this.anim.play('turtle_dead');
                     this.animState = this.anim.play('turtle_dead').name;
                     this.node.getComponent(cc.RigidBody).linearVelocity = cc.v2(0,0);
+                }
+                else if(other.node.y < this.node.y && this.animState == this.anim.play('turtle_move').name){
+                    other.node.getComponent(player).hurt();
+                    other.node.getComponent(player_Lv2).hurt();
                 }
                 else if(this.animState == this.anim.play('turtle_dead').name){
                     if(this.node.x > other.node.x){ //playery is left
@@ -157,6 +161,10 @@ export default class Enemy extends cc.Component {
                     }
                     this.anim.play('turtle_slide');
                     this.animState = this.anim.play('turtle_slide').name;
+                }
+                else if(this.animState == this.anim.play('turtle_slide').name && this.node.y > other.node.y){
+                    other.node.getComponent(player).hurt();
+                    other.node.getComponent(player_Lv2).hurt();
                 }
                 else if(this.animState == this.anim.play('turtle_slide').name && this.node.y < other.node.y){
                     //cc.log('t->d');
@@ -187,11 +195,12 @@ export default class Enemy extends cc.Component {
         else if(self.node.name == 'mushroom' ){
             cc.log(this.node.name,other.node.name);
             if(other.node.name == 'player'){
-                if(other.node.y > this.node.y){
+                if(contact.getWorldManifold().normal.y >0){
                     this.anim.play('mushroom_dead');
                     this.animState =  this.anim.play('mushroom_dead').name;
                     this.scheduleOnce(()=>{this.node.destroy()},1);
                 }
+                
             }
             else if (other.node.getComponent(cc.PhysicsBoxCollider).tag == 1){
                 //this.node.scaleX = -(this.node.scaleX);

@@ -1,0 +1,49 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "Big_swim",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 1.35,
+  "sample": 60,
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "spriteFrame": [
+          {
+            "frame": 0,
+            "value": {
+              "__uuid__": "8092b467-aeff-4401-a470-02874c873202"
+            }
+          },
+          {
+            "frame": 0.3333333333333333,
+            "value": {
+              "__uuid__": "ad08fa86-0799-49cd-9899-f189398a071a"
+            }
+          },
+          {
+            "frame": 0.6666666666666666,
+            "value": {
+              "__uuid__": "e9266e3a-8a2a-4140-bdee-6e62487a0030"
+            }
+          },
+          {
+            "frame": 1,
+            "value": {
+              "__uuid__": "753ee22a-6cf2-4d85-bb1c-959ed0c5c502"
+            }
+          },
+          {
+            "frame": 1.3333333333333333,
+            "value": {
+              "__uuid__": "f4104869-74f4-45ec-a25b-ce98b772ae37"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "events": []
+}
