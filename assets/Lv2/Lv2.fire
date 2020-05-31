@@ -2377,7 +2377,7 @@
       "array": [
         0,
         0,
-        293.5908215456069,
+        554.2562584220408,
         0,
         0,
         0,
@@ -3676,6 +3676,9 @@
     "label": null,
     "text": "hello",
     "Player": null,
+    "Player2": {
+      "__id__": 85
+    },
     "life": {
       "__id__": 78
     },
@@ -11184,8 +11187,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        1748.76,
-        245.288,
+        1746.427,
+        245.055,
         0,
         0,
         0,
@@ -11242,7 +11245,7 @@
       "__id__": 322
     },
     "_enabled": true,
-    "tag": 0,
+    "tag": 11,
     "_density": 1,
     "_sensor": false,
     "_friction": 0.2,

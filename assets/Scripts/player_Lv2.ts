@@ -342,7 +342,8 @@ export default class player_Lv2 extends cc.Component {
                 this.enter = true; 
             }
             if(other.node.getComponent(cc.PhysicsBoxCollider).tag == 11){
-                cc.director.loadScene("dead_menu");
+                this.Gameplay.getComponent(gameplay).game_clear(2);
+                cc.director.loadScene("gameclear");
             }
         }
 

@@ -13,48 +13,26 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class NewClass extends cc.Component {
 
-    @property(cc.Label)
-    label: cc.Label = null;
-
-    @property
-    text: string = 'hello';
-
-    @property(cc.Node)
-    Login: cc.Node = null;
-
-    @property(cc.Node)
-    Signup: cc.Node = null;
-
-    @property(cc.Node)
-    OK: cc.Node = null;
-
     @property(cc.Node)
     Stage1: cc.Node = null;
 
     @property(cc.Node)
     Stage2: cc.Node = null;
 
-    @property(cc.Node)
-    restart: cc.Node = null;
+
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {}
-
-    start () {
-        this.Login.on('click',()=>{cc.director.loadScene('login')});
-            //cc.director.loadScene('login');
-        
-        this.Signup.on('click',()=>{cc.director.loadScene('signup')});
-        this.OK.on('click',()=>{cc.director.loadScene('login')});
-
-        this.Stage1.on('click',()=>{cc.director.loadScene('Lv1')});
-
-        this.Stage2.on('click',()=>{cc.director.loadScene('Lv2')});
-
-        this.restart.on('click',()=>{cc.director.loadScene('stage_choose')});
-
+    onLoad () {
+        this.Stage1.on('click',()=>{
+            cc.director.loadScene('Lv1');
+        })
+        this.Stage2.on('click',()=>{
+            cc.director.loadScene('Lv2');
+        })
     }
+
+    
 
     // update (dt) {}
 }

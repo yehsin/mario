@@ -9,8 +9,11 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 import player from "./player";
 import coin from "./coin_ans";
+import player_Lv2 from "./player_Lv2";
 const {ccclass, property} = cc._decorator;
-
+let User = '';
+let datascore = 0;
+let remain_life = 3;
 @ccclass
 export default class gameplay extends cc.Component {
 
@@ -22,6 +25,9 @@ export default class gameplay extends cc.Component {
 
     @property(player)
     Player: player = null;
+
+    @property(player_Lv2)
+    Player2: player_Lv2 = null;
 
     @property(cc.Label)
     life: cc.Node = null;
@@ -42,14 +48,72 @@ export default class gameplay extends cc.Component {
     private playerLife: number = 3;
     private timer: number =250;
     private coins_count :number = 0;
-    private score :number = 0;
+    public score :number = 0;
     private tmpScore:number = 0;
+    public stage:number = 1;
+    User_play = 'Steve';
+    tmp = []
+    private over:boolean = false;
 
-    
+    onLoad(){
+        if(this.Player!=null) this.stage = 1;
+        else if(this.Player2!=null) this.stage = 2;
+        firebase.auth().onAuthStateChanged(function(user){
+            let tmp = user.email.split('@');
+            User = tmp[0];
+            let ref = firebase.database().ref('life').child(User);
+            ref.once('value').then(function(data){
+                cc.log(data.val().life);
+                remain_life = data.val().life;
+                firebase.database().ref('tmp').set({
+                    'tmp' : remain_life
+                })
+            });
+            
+            //this.playerLife = remain_life;
+        });
+        cc.log('???');
+        firebase.database().ref('tmp').once('value').then((data)=>{
+            remain_life = data.val().tmp;
+            
+        });
+        cc.log(remain_life);
 
+
+    }
 
     gamestart(){
         cc.audioEngine.playMusic(this.bgm, true);
+        
+        
+
+        this.playerLife = remain_life;
+        
+        //cc.log(this.User_play);
+    }
+
+    game_clear(n){
+        remain_life = this.playerLife;
+        firebase.database().ref('user_list').child(n).push({
+            'score': this.score
+        });
+
+        firebase.auth().onAuthStateChanged(function(user){
+            let tmp = user.email.split('@');
+
+            cc.log(user.email.split('@'));
+            User = tmp[0];
+            firebase.database().ref('User_list').child(User).push({
+                'score': datascore
+            });
+            firebase.database().ref('life').child(User).set({
+                'life': remain_life
+            })
+            
+        });
+        cc.log('success');
+        cc.game.pause();
+        
     }
 
     gamepause(){
@@ -104,9 +168,27 @@ export default class gameplay extends cc.Component {
     }
 
     update(dt){
-        if(this.playerLife == 0){
-            //this.gameover();
-            this.gameEnd();
+        datascore = this.score;
+        if(this.playerLife == 0 && !this.over){
+            this.over = true;
+            remain_life = 3;
+
+            let ref = firebase.database().ref('user_list').child(this.stage);
+            ref.push({
+                'score' : this.score
+            });
+            firebase.auth().onAuthStateChanged(function(user){
+                let tmp = user.email.split('@');
+    
+                cc.log(user.email.split('@'));
+                User = tmp[0];
+                
+                firebase.database().ref('life').child(User).set({
+                    'life': remain_life
+                })
+                
+            });
+            cc.director.loadScene('dead_menu');
         }
         this.countScore();
 

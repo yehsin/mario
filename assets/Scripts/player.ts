@@ -259,6 +259,7 @@ export default class player extends cc.Component {
             this.Gameplay.getComponent(gameplay).countLife(-1);
         }
         else if(other.node.name == 'flag'){
+            this.Gameplay.getComponent(gameplay).game_clear(1);
             cc.director.loadScene('Lv2');
         }
 

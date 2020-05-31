@@ -9,7 +9,8 @@
 //  - [English] http://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-
+let txtmail = '';
+let txtpassword = '';
 @ccclass
 export default class signup extends cc.Component {
 
@@ -22,8 +23,8 @@ export default class signup extends cc.Component {
     @property(cc.Node)
     OK: cc.Node = null;
 
-    public txtmail:string = null;
-    public txtpassword:string = null;
+    //public txtmail:string = null;
+    //public txtpassword:string = null;
 
     public OK_enter = false;
 
@@ -35,17 +36,17 @@ export default class signup extends cc.Component {
         });
     }
     write_data(){
-        this.txtmail = this.Email.getComponent(cc.EditBox).string;
-        this.txtpassword = this.Password.getComponent(cc.EditBox).string;
+        txtmail = this.Email.getComponent(cc.EditBox).string;
+        txtpassword = this.Password.getComponent(cc.EditBox).string;
     }
 
     Sign_up(){
-        firebase.auth().createUserWithEmailAndPassword(this.txtmail, this.txtpassword)
+        firebase.auth().createUserWithEmailAndPassword(txtmail, txtpassword)
             .then((result) => {
-                var txt = this.txtmail.split("@");
-                firebase.database().ref('user_list').child(txt[0]).set({
+                var txt = txtmail.split("@");
+                /*firebase.database().ref('user_list').child(txt[0]).set({
                     'user_password': this.txtpassword
-                })
+                })*/
                 cc.log("success", result.message);
                 cc.director.loadScene('stage_choose');
             })
@@ -59,8 +60,8 @@ export default class signup extends cc.Component {
     }
 
     update(dt){
-        this.txtmail = this.Email.getComponent(cc.EditBox).string;
-        this.txtpassword = this.Password.getComponent(cc.EditBox).string;
+        txtmail = this.Email.getComponent(cc.EditBox).string;
+        txtpassword = this.Password.getComponent(cc.EditBox).string;
     }
     
 
