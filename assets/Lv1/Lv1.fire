@@ -1704,8 +1704,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        5581.495,
-        -66.251,
+        -245.721,
+        -169.378,
         0,
         0,
         0,
@@ -8788,7 +8788,7 @@
         "__uuid__": "56fb374a-46e8-4656-b588-7f002559ecc4"
       }
     ],
-    "playOnLoad": false,
+    "playOnLoad": true,
     "_id": "7ahkJoon1CZLnWsix7dhTi"
   },
   {
@@ -9165,13 +9165,13 @@
     "body": null,
     "_offset": {
       "__type__": "cc.Vec2",
-      "x": 0,
+      "x": 0.3,
       "y": 0
     },
     "_size": {
       "__type__": "cc.Size",
-      "width": 70,
-      "height": 70
+      "width": 48.9,
+      "height": 49.6
     },
     "_id": "f6sNGp7HlARZIiVK8aK/OS"
   },
@@ -9379,13 +9379,13 @@
     "body": null,
     "_offset": {
       "__type__": "cc.Vec2",
-      "x": 0,
+      "x": 1.2,
       "y": 0
     },
     "_size": {
       "__type__": "cc.Size",
-      "width": 70,
-      "height": 70
+      "width": 50.8,
+      "height": 51.5
     },
     "_id": "c9J48jSdlAtJpqRO6hppo7"
   },
@@ -9593,13 +9593,13 @@
     "body": null,
     "_offset": {
       "__type__": "cc.Vec2",
-      "x": 0,
-      "y": 0
+      "x": -0.4,
+      "y": -0.3
     },
     "_size": {
       "__type__": "cc.Size",
-      "width": 70,
-      "height": 70
+      "width": 51.7,
+      "height": 50.3
     },
     "_id": "60gfLObFhHy5DLhu6DsYma"
   },
@@ -10261,13 +10261,13 @@
     "body": null,
     "_offset": {
       "__type__": "cc.Vec2",
-      "x": 0,
+      "x": 1,
       "y": 0
     },
     "_size": {
       "__type__": "cc.Size",
-      "width": 70,
-      "height": 70
+      "width": 50.3,
+      "height": 49.6
     },
     "_id": "dfclI7iLtHWIWzYV8IBfG0"
   },
@@ -10477,13 +10477,13 @@
     "body": null,
     "_offset": {
       "__type__": "cc.Vec2",
-      "x": 0,
-      "y": 0
+      "x": 0.6,
+      "y": 0.7
     },
     "_size": {
       "__type__": "cc.Size",
-      "width": 70,
-      "height": 70
+      "width": 49.6,
+      "height": 51
     },
     "_id": "aeFpoVZ5lO6qzcjVTvOYLJ"
   },
